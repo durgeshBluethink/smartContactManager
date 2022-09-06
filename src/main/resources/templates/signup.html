@@ -35,8 +35,9 @@
                                    th:classappend="${#fields.hasErrors('name') ? 'is-invalid':''}"
                                    placeholder="Enter your name"
                                    th:value="${user.name}"
-                                   required="required"
                                    aria-describedby="emailHelp">
+<!--                                   required="required"-->
+
                             <div class="invalid-feedback"
                                  th:each="e:${#fields.errors('name')}"
                                  th:text="${e}">
@@ -50,10 +51,11 @@
                                    th:classappend="${#fields.hasErrors('email')?'is-invalid':''}"
                                    class="form-control"
                                    id="email_field"
-                                   required="required"
                                    placeholder="Enter your Email"
                                    th:value="${user.email}"
                                    aria-describedby="emailHelp">
+<!--                                   required="required"-->
+
                             <div class="invalid-feedback"
                                  th:each="e:${#fields.errors('email')}"
                                  th:text="${e}">
@@ -66,11 +68,12 @@
                                    name="password"
                                    class="form-control"
                                    id="password_field"
-                                   required="required"
                                    placeholder="Enter your password"
                                    th:value="${user.password}"
                                    th:classappend="${#fields.hasErrors('password')?'is-invalid':''}"
                                    aria-describedby="emailHelp">
+<!--                                   required="required"-->
+
                             <div class="invalid-feedback mb-3"
                                  th:each="e:${#fields.errors('password')}"
                                  th:text="${e}">
@@ -82,18 +85,20 @@
                                       name="about"
                                       placeholder="Leave a comment here"
                                       id="about_field"
-                                      required="required"
                                       th:value="${user.about}"
                                       th:text="${user.about}"
-                                      style="height: 100px"></textarea>
+                                      style="height: 100px">
+<!--                                      required="required"-->
+                                      </textarea>
                             <label for="about_field">Enter Something about yourself !!</label>
                         </div>
                         <div class="mb-3 form-check">
                             <input type="checkbox"
                                    name="agreement"
                                    class="form-check-input"
-                                   required="required"
                                    id="agreement">
+<!--                                   required="required"-->
+
                             <label class="form-check-label" for="agreement">Terms & Condition</label>
                         </div>
                         <div class="container text-center">
