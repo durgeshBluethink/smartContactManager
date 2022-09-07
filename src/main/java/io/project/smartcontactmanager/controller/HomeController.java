@@ -41,7 +41,7 @@ public class HomeController {
     }
 
     @RequestMapping("/signin")
-    public String signin(Model model){
+        public String signin(Model model){
         model.addAttribute("title", "Login - Smart Contact Manager");
         return "login";
     }
