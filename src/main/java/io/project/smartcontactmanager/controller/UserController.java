@@ -5,13 +5,17 @@ import io.project.smartcontactmanager.model.Contact;
 import io.project.smartcontactmanager.model.User;
 import io.project.smartcontactmanager.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.security.Principal;
 
 @Controller
@@ -48,17 +52,39 @@ public class UserController {
 
 //    processing Add Contact form
     @PostMapping("/process-contact")
-    public String processContact(@ModelAttribute Contact contact, Principal principal){
-        String name = principal.getName();
-        User user = this.userRepository.getUserByUserName(name);
+    public String processContact(@ModelAttribute Contact contact, @RequestParam("processImage") MultipartFile file, Principal principal){
 
-        contact.setUser(user);
-        user.getContacts().add(contact);
+        try{
+            String name = principal.getName();
+            User user = this.userRepository.getUserByUserName(name);
 
-        this.userRepository.save(user);
 
-        System.out.println("Date " + contact);
-        System.out.println("Added to Database");
+//            processing and uploading file
+            if(file.isEmpty()){
+//                if the file is empty, produce a message
+                System.out.println("File is empty");
+            }else{
+//                copy the file to folder and update the name to contact
+                contact.setImage(file.getOriginalFilename());
+                File saveFile = new ClassPathResource("static/img").getFile();
+                Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + file.getOriginalFilename());
+                Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+
+                System.out.println("Image is uploaded!");
+            }
+            contact.setUser(user);
+            user.getContacts().add(contact);
+
+            this.userRepository.save(user);
+
+            System.out.println("Date " + contact);
+            System.out.println("Added to Database");
+        }
+        catch(Exception e){
+            System.out.println("Error: " + e.getMessage());
+            e.printStackTrace();
+        }
+
         return "normal/add_contact_form";
     }
 }
