@@ -4,9 +4,13 @@ package io.project.smartcontactmanager.controller;
 import io.project.smartcontactmanager.helper.Message;
 import io.project.smartcontactmanager.model.Contact;
 import io.project.smartcontactmanager.model.User;
+import io.project.smartcontactmanager.repository.ContactRepository;
 import io.project.smartcontactmanager.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequestMapping("/user")
@@ -26,6 +31,9 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ContactRepository contactRepository;
 
 //    Har bar chal jayega
     @ModelAttribute
@@ -95,5 +103,25 @@ public class UserController {
         }
 
         return "normal/add_contact_form";
+    }
+
+//    Show Contacts Handler
+//    per page = 5
+//    current page = 0[page]
+    @GetMapping("/show-contacts/{page}")
+    public String showContacts(@PathVariable("page") Integer page, Model m, Principal principal){
+        m.addAttribute("title", "Show User Contacts");
+
+//        Fetching and sending contact list to UI
+        String userName = principal.getName();
+        User user = this.userRepository.getUserByUserName(userName);
+
+        Pageable pageable = PageRequest.of(page, 5);
+
+        Page<Contact> contacts = this.contactRepository.findContactsByUser(user.getId(), pageable);
+        m.addAttribute("contacts", contacts);
+        m.addAttribute("currentPage", page);
+        m.addAttribute("totalPages", contacts.getTotalPages());
+        return "normal/show_contacts";
     }
 }
