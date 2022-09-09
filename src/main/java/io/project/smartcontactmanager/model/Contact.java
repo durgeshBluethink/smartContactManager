@@ -1,5 +1,7 @@
 package io.project.smartcontactmanager.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -24,6 +26,7 @@ public class Contact {
     private String image;
 
     @ManyToOne
+    @JsonIgnore
     private User user;
 
     @Column(length = 1000)
