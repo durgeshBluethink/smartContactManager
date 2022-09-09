@@ -141,4 +141,26 @@ public class UserController {
         }
         return "normal/contact_details";
     }
+
+//    Delete Contact Handler
+    @GetMapping("/delete/{cId}")
+    public String deleteContact(@PathVariable("cId") Integer cId, Model model, Principal principal, HttpSession httpSession){
+        Optional<Contact> contactOptional = this.contactRepository.findById(cId);
+        Contact contact = contactOptional.get();
+
+//      Contact contact = this.contactRepository.findById(cId).get();
+
+        String userName = principal.getName();
+        User user = this.userRepository.getUserByUserName(userName);
+
+        if(user.getId() == contact.getUser().getId()) {
+
+//             Contact Image Deletion Task 
+            contact.setUser(null);
+            this.contactRepository.delete(contact);
+            httpSession.setAttribute("message", new Message("Contact Deleted Successfully...", "alert-success"));
+        }
+
+        return "redirect:/user/show-contacts/0";
+    }
 }
