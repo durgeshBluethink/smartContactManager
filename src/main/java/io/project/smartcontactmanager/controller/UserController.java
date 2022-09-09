@@ -24,6 +24,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/user")
@@ -73,10 +74,11 @@ public class UserController {
             if(file.isEmpty()){
 //                if the file is empty, produce a message
                 System.out.println("File is empty");
+                contact.setImage("contact.png");
             }else{
 //                copy the file to folder and update the name to contact
                 contact.setImage(file.getOriginalFilename());
-                File saveFile = new ClassPathResource("static/img").getFile();
+                File saveFile = new ClassPathResource("static/img/contactImage").getFile();
                 Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + file.getOriginalFilename());
                 Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 
@@ -121,7 +123,17 @@ public class UserController {
         Page<Contact> contacts = this.contactRepository.findContactsByUser(user.getId(), pageable);
         m.addAttribute("contacts", contacts);
         m.addAttribute("currentPage", page);
-        m.addAttribute("totalPages", contacts.getTotalPages());
+        m.addAttribute("totalPage", contacts.getTotalPages());
         return "normal/show_contacts";
+    }
+
+    @GetMapping("/{cId}/contact")
+    public String showContactDetail(@PathVariable("cId") Integer cId, Model model){
+        System.out.println("cId " + cId);
+        Optional<Contact> contactOptional = this.contactRepository.findById(cId);
+        Contact contact = contactOptional.get();
+
+        model.addAttribute("contact", contact);
+        return "normal/contact_details";
     }
 }

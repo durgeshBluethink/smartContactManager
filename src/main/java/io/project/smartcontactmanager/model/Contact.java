@@ -1,6 +1,8 @@
 package io.project.smartcontactmanager.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "CONTACT")
@@ -9,10 +11,14 @@ public class Contact {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int cId;
+    @NotBlank(message = "Name field is required !!")
     private String name;
     private String secondName;
     private String work;
+    @NotBlank(message = "Email can't be empty!")
+    @Pattern(regexp = "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$",message = "Invalid email !!")
     private String email;
+    @NotBlank(message = "Phone number required !!")
     private String phone;
 
     private String image;
