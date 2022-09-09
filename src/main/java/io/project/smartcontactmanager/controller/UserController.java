@@ -156,8 +156,12 @@ public class UserController {
         if(user.getId() == contact.getUser().getId()) {
 
 //             Contact Image Deletion Task
-            contact.setUser(null);
-            this.contactRepository.delete(contact);
+//            contact.setUser(null);
+
+            user.getContacts().remove(contact);
+            this.userRepository.save(user);
+
+           // this.contactRepository.delete(contact);
             httpSession.setAttribute("message", new Message("Contact Deleted Successfully...", "alert-success"));
         }
 

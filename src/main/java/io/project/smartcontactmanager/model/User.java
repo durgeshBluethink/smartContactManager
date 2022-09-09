@@ -26,7 +26,8 @@ public class User {
     @Column(length = 500)
     private String about;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
+//    jab bhi child entity ie contacts unlinked hojayegi parent se then woh remove hojayega
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
     private List<Contact> contacts = new ArrayList<>();
 
     public List<Contact> getContacts() {
