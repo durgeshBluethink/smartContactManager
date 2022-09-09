@@ -155,12 +155,61 @@ public class UserController {
 
         if(user.getId() == contact.getUser().getId()) {
 
-//             Contact Image Deletion Task 
+//             Contact Image Deletion Task
             contact.setUser(null);
             this.contactRepository.delete(contact);
             httpSession.setAttribute("message", new Message("Contact Deleted Successfully...", "alert-success"));
         }
 
         return "redirect:/user/show-contacts/0";
+    }
+
+
+//    Update Form handler
+
+    @PostMapping("/update-contact/{cid}")
+    public String updateForm(@PathVariable("cid") Integer cid, Model m){
+        m.addAttribute("title", "Update Contact");
+        Contact contact = this.contactRepository.findById(cid).get();
+        m.addAttribute("contact", contact);
+        return "normal/update_form";
+    }
+
+//    Update Contact Handler
+    @PostMapping("/process-update")
+    public String updateHandler(@ModelAttribute Contact contact, @RequestParam("profileImage") MultipartFile multipartFile, Model m, HttpSession session, Principal principal){
+
+        try{
+//            Old Contact Details
+            Contact oldcontactDetail = this.contactRepository.findById(contact.getcId()).get();
+            if(!multipartFile.isEmpty()){
+
+//              Delete photo from envir
+                File deleteFile = new ClassPathResource("static/img/contactImage").getFile();
+                File file1 = new File(deleteFile, oldcontactDetail.getImage());
+                file1.delete();
+
+//                Update New photo
+                File saveFile = new ClassPathResource("static/img/contactImage").getFile();
+                Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + multipartFile.getOriginalFilename());
+                Files.copy(multipartFile.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+                contact.setImage(multipartFile.getOriginalFilename());
+            }
+            else{
+                contact.setImage(oldcontactDetail.getImage());
+            }
+            User user = this.userRepository.getUserByUserName(principal.getName());
+            contact.setUser(user);
+            this.contactRepository.save(contact);
+            session.setAttribute("message", new Message("Your Contact is updated...", "alert-success"));
+
+        }
+        catch(Exception e){
+            e.printStackTrace();;
+        }
+
+
+        System.out.println("Contact Name " + contact.getName());
+        return "redirect:/user/" + contact.getcId() + "/contact";
     }
 }
