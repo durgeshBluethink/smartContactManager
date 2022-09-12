@@ -4,6 +4,7 @@ import io.project.smartcontactmanager.model.User;
 import io.project.smartcontactmanager.repository.UserRepository;
 import io.project.smartcontactmanager.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +21,9 @@ public class ForgotController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     Random random = new Random(1000);
 
@@ -91,5 +95,16 @@ public class ForgotController {
             session.setAttribute("message", "You have entered wrong OTP !!");
             return "verify_otp";
         }
+    }
+
+
+//    Change Password
+    @PostMapping("/change-password")
+    public String changePassword(@RequestParam("newPassword") String newPassword, HttpSession session){
+        String email = (String)session.getAttribute("email");
+        User user = this.userRepository.getUserByUserName(email);
+        user.setPassword(this.bCryptPasswordEncoder.encode(newPassword));
+        this.userRepository.save(user);
+        return "redirect:/signin?change=password changed successfully...";
     }
 }
