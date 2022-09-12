@@ -47,7 +47,8 @@ public class EmailService {
 
             m.setSubject(subject);
 
-            m.setText(message);
+//            m.setText(message);
+            m.setContent(message, "text/html");
 
             Transport.send(m);
             System.out.println("Email Sent...");
