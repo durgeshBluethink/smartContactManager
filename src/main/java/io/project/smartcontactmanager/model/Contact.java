@@ -11,7 +11,7 @@ import javax.validation.constraints.Pattern;
 public class Contact {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int cId;
     @NotBlank(message = "Name field is required !!")
     private String name;
